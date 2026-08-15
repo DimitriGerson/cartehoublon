@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent
 DB = BASE_DIR / "Houblon.db"
 
 DOCS_USER = os.environ.get("DOCS_USER")
-DOC_PASSWORD = os.environ.get("DOCS_PASSWORD")
+DOCS_PASSWORD = os.environ.get("DOCS_PASSWORD")
 
 # Application FastAPI
 

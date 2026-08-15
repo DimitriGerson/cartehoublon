@@ -1,14 +1,15 @@
 import sqlite3
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 app = FastAPI()
-
-DB = "Houblon.db"
+BASE_DIR = Path(__file__).resolve().parent
+DB = BASE_DIR / "Houblon.db"
 
 app.mount(
     "/static",
-    StaticFiles(directory="static"),
+    StaticFiles(directory=BASE_DIR / "static"),
     name="static"
 )
 

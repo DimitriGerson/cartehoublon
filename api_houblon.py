@@ -40,7 +40,7 @@ def verify_docs(credentials: HTTPBasicCredentials = Depends(security)):
     # on refuse l'accès.
     if not DOCS_USER or not DOCS_PASSWORD:
         raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAIBLE,
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Documentation non configurée."
         )
 
@@ -54,6 +54,13 @@ def verify_docs(credentials: HTTPBasicCredentials = Depends(security)):
         DOCS_PASSWORD
     )
 
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Identifiants incorrects",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+
     return credentials.username
 
 # Documentation Swagger protégée
@@ -63,13 +70,13 @@ def protected_docs(
     credentials: HTTPBasicCredentials = Depends(verify_docs)
 ):
     return get_swagger_ui_html(
-        openapi_url="openapi.json",
+        openapi_url="/openapi.json",
         title="Carte Houblon - Swagger"
     )
 
 #Documentation ReDoc protégée
 
-@app.get("/redoc",include_in_schema=False)
+@app.get("/redoc", include_in_schema=False)
 def protected_redoc(
     credentials: HTTPBasicCredentials = Depends(verify_docs)
 ):

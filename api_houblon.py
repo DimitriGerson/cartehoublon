@@ -1,11 +1,100 @@
+import os
+import secrets
 import sqlite3
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
-app = FastAPI()
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
+from fastapi.openapi.utils import get_openapi
+from fastapi.staticfiles import StaticFiles
+
+# Configuration
+
 BASE_DIR = Path(__file__).resolve().parent
 DB = BASE_DIR / "Houblon.db"
+
+DOCS_USER = os.environ.get("DOCS_USER")
+DOC_PASSWORD = os.environ.get("DOCS_PASSWORD")
+
+# Application FastAPI
+
+app = FastAPI(
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None
+)
+
+# Authentification Swagger / Redoc
+
+security = HTTPBasic()
+
+def verify_docs(credentials: HTTPBasicCredentials = Depends(security)):
+    """
+    Vérifie les identifiants permettant d'accéder
+    à Swagger, Redoc et OpenAPI.
+    """
+
+    # Si les variables ne sont pas configurées,
+    # on refuse l'accès.
+    if not DOCS_USER or not DOCS_PASSWORD:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAIBLE,
+            detail="Documentation non configurée."
+        )
+
+    correct_username = secrets.compare_digest(
+        credentials.username,
+        DOCS_USER
+    )
+
+    correct_password = secrets.compare_digest(
+        credentials.password,
+        DOCS_PASSWORD
+    )
+
+    return credentials.username
+
+# Documentation Swagger protégée
+
+@app.get("/docs", include_in_schema=False)
+def protected_docs(
+    credentials: HTTPBasicCredentials = Depends(verify_docs)
+):
+    return get_swagger_ui_html(
+        openapi_url="openapi.json",
+        title="Carte Houblon - Swagger"
+    )
+
+#Documentation ReDoc protégée
+
+@app.get("/redoc",include_in_schema=False)
+def protected_redoc(
+    credentials: HTTPBasicCredentials = Depends(verify_docs)
+):
+    return get_redoc_html(
+        openapi_url="/openapi.json",
+        title="Carte Houblon - ReDoc"
+    )
+
+#OpenAPI JSON protégé
+
+@app.get("/openapi.json", include_in_schema=False)
+def protected_openapi(
+    credentials: HTTPBasicCredentials = Depends(verify_docs)
+):
+    return JSONResponse(
+        get_openapi(
+            title=app.title,
+            version=app.version,
+            openapi_version=app.openapi_version,
+            description=app.description,
+            routes=app.routes,
+        )
+    )
+
+# Fichiers statiques
 
 app.mount(
     "/static",

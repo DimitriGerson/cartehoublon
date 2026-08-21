@@ -134,7 +134,7 @@ fetch("/carte")
 
                   stroke: new ol.style.Stroke({
                      color: "rgba(120,120,120,0.6)",
-                     whidth: 2
+                     width: 2
                   }),
 
                  fill: new ol.style.Fill({
@@ -198,7 +198,7 @@ map.on("click", function(evt) {
     }
 
     popupElement.innerHTML =
-                "<b>" + feature.get("nom") + "</br><br>" +
+                "<b>" + feature.get("nom") + "</b></br><br>" +
                 "Sexe : " + feature.get("sexe");
     popup.setPosition(evt.coordinate);
 });

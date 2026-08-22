@@ -4,7 +4,9 @@ const map = new ol.Map({
 
     layers: [
         new ol.layer.Tile({
-            source: new ol.source.OSM()
+            source: new ol.source.XYZ({
+		url: 'https://{a-b}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
+	    })
         })
     ],
 

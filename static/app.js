@@ -63,6 +63,9 @@ fetch("/carte")
     const features = [];
 	// essais tel
 	const isMobile = window.innerWidth < 768;
+
+	console.log("Largeur écran :", window.innerWidth);
+	console.log("isMobile :", isMobile);
     data.forEach(h => {
         if(!isMobile && h.sexe === "M") {
 

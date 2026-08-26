@@ -22,11 +22,13 @@ const isMobile = window.innerWidth < 768;
         ]),
 		zoom: isMobile ? 10 : 11.8,
 		constrainResolution: true,
-		extent: ol.proj.transformExtent(
+		extent: isMobile
+			? ol.proj.transformExtent(
 			[-2.6, 47.5, -1.9, 47.9],
 			'EPSG:4326',
 			'EPSG:3857'
 		)
+	   : undefined
     })
 });
 

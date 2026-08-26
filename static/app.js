@@ -72,8 +72,6 @@ fetch("/carte")
 
     console.log("Données recues :", data);
     const features = [];
-	// essais tel
-	const isMobile = window.innerWidth < 768;
 
 	console.log("Largeur écran :", window.innerWidth);
 	console.log("isMobile :", isMobile);

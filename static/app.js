@@ -1,15 +1,16 @@
 const isMobile = window.innerWidth < 768;
-/* const map = new ol.Map({
+ const map = new ol.Map({
 
     target: "map",
     layers : [
     new ol.layer.Tile({
-    source: new ol.source.XYZ({
+    source: new ol.source.OSM()
+		/*.XYZ({
         url: 'https://{a-c}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
         tilePixelRatio: 1
     }),
     transition: 0,
-    preload: 0
+    preload: 0*/
 })
     ],
     
@@ -28,17 +29,7 @@ const isMobile = window.innerWidth < 768;
 		)
     })
 });
-*/
-const fond = new ol.layer.Image({
-    source: new ol.source.ImageStatic({
-        url: '/images/fond-carte.webp',
-        imageExtent: ol.proj.transformExtent(
-            [-2.6, 47.5, -1.9, 47.9],
-            'EPSG:4326',
-            'EPSG:3857'
-        )
-    })
-});
+
 
 const map = new ol.Map({
     target: "map",

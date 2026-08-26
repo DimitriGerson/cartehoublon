@@ -1,5 +1,5 @@
 const isMobile = window.innerWidth < 768;
-const map = new ol.Map({
+/* const map = new ol.Map({
 
     target: "map",
     layers : [
@@ -26,6 +26,26 @@ const map = new ol.Map({
 			'EPSG:4326',
 			'EPSG:3857'
 		)
+    })
+});
+*/
+const fond = new ol.layer.Image({
+    source: new ol.source.ImageStatic({
+        url: '/images/fond-carte.webp',
+        imageExtent: ol.proj.transformExtent(
+            [-2.6, 47.5, -1.9, 47.9],
+            'EPSG:4326',
+            'EPSG:3857'
+        )
+    })
+});
+
+const map = new ol.Map({
+    target: "map",
+    layers: [fond],
+    view: new ol.View({
+        center: ol.proj.fromLonLat([-2.24, 47.725]),
+        zoom: 11
     })
 });
 console.log("app.js chargé");

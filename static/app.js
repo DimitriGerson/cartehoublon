@@ -5,6 +5,7 @@ const map = new ol.Map({
     new ol.layer.Tile({
     source: new ol.source.XYZ({
         url: 'https://{a-c}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+		tileSize: 512,
         tilePixelRatio: 1
     }),
     transition: 0,

@@ -30,7 +30,7 @@ const isMobile = window.innerWidth < 768;
     })
 });
 
-
+/*
 const map = new ol.Map({
     target: "map",
     layers: [fond],
@@ -38,7 +38,7 @@ const map = new ol.Map({
         center: ol.proj.fromLonLat([-2.24, 47.725]),
         zoom: 11
     })
-});
+});*/
 console.log("app.js chargé");
 const idsIsolees = new Set();
 const idsProches = new Set();

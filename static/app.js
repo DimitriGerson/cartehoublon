@@ -21,7 +21,11 @@ const map = new ol.Map({
         ]),
 
         zoom: 11.8,
-		maxZoom: 12
+		constrainResolution: true,
+		extent: ol.proj.transformExtent(
+			[-2.6, 47.5, -1.9, 47.9],
+			'EPSG:4326',
+			'EPSG:3857'
     })
 });
 console.log("app.js chargé");

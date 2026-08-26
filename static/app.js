@@ -67,6 +67,42 @@ Promise.all([
 
     chargerHoublons();
 });
+
+navigator.geolocation.getCurrentPosition(function(position) {
+
+    const coord = ol.proj.fromLonLat([
+        position.coords.longitude,
+        position.coords.latitude
+    ]);
+
+    const maPosition = new ol.Feature({
+        geometry: new ol.geom.Point(coord),
+        type: "maPosition"
+    });
+
+    const sourcePosition = new ol.source.Vector({
+        features: [maPosition]
+    });
+
+    const couchePosition = new ol.layer.Vector({
+        source: sourcePosition,
+        style: new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 8,
+                fill: new ol.style.Fill({
+                    color: "green"
+                }),
+                stroke: new ol.style.Stroke({
+                    color: "white",
+                    width: 2
+                })
+            })
+        })
+    });
+
+    map.addLayer(couchePosition);
+
+});
 function chargerHoublons() {
 fetch("/carte")
 .then(response => response.json())

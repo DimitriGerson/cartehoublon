@@ -11,15 +11,14 @@ const map = new ol.Map({
     preload: 0
 })
     ],
-
+    const isMobile = window.innerWidth < 768;
     view: new ol.View({
 
         center: ol.proj.fromLonLat([
             -2.24,
             47.725
         ]),
-
-        zoom: 11.8,
+		zoom: isMobile ? 10 : 11.8,
 		constrainResolution: true,
 		extent: ol.proj.transformExtent(
 			[-2.6, 47.5, -1.9, 47.9],

@@ -1,11 +1,10 @@
 const map = new ol.Map({
 
     target: "map",
-
+    Layers : [
     new ol.layer.Tile({
     source: new ol.source.XYZ({
         url: 'https://{a-c}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-		tileSize: 512,
         tilePixelRatio: 1
     }),
     transition: 0,
@@ -26,6 +25,7 @@ const map = new ol.Map({
 			[-2.6, 47.5, -1.9, 47.9],
 			'EPSG:4326',
 			'EPSG:3857'
+		)
     })
 });
 console.log("app.js chargé");

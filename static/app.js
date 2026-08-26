@@ -61,9 +61,10 @@ fetch("/carte")
 
     console.log("Données recues :", data);
     const features = [];
-
+	// essais tel
+	const isMobile = window.innerWidth < 768;
     data.forEach(h => {
-        if(h.sexe === "M") {
+        if(!isMobile && h.sexe === "M") {
 
            const centre = ol.proj.fromLonLat([
                h.longitude,

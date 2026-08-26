@@ -19,7 +19,8 @@ const map = new ol.Map({
             47.725
         ]),
 
-        zoom: 11.8
+        zoom: 11.8,
+		maxZoom: 12
     })
 });
 console.log("app.js chargé");

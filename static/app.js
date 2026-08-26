@@ -2,12 +2,14 @@ const map = new ol.Map({
 
     target: "map",
 
-    layers: [
-        new ol.layer.Tile({
-            source: new ol.source.XYZ({
-		url: 'https://{a-b}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
-	    })
-        })
+    new ol.layer.Tile({
+    source: new ol.source.XYZ({
+        url: 'https://{a-c}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+        tilePixelRatio: 1
+    }),
+    transition: 0,
+    preload: 0
+})
     ],
 
     view: new ol.View({

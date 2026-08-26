@@ -1,7 +1,7 @@
 const map = new ol.Map({
 
     target: "map",
-    Layers : [
+    layers : [
     new ol.layer.Tile({
     source: new ol.source.XYZ({
         url: 'https://{a-c}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',

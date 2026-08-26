@@ -1,3 +1,4 @@
+const isMobile = window.innerWidth < 768;
 const map = new ol.Map({
 
     target: "map",
@@ -11,7 +12,7 @@ const map = new ol.Map({
     preload: 0
 })
     ],
-    const isMobile = window.innerWidth < 768;
+    
     view: new ol.View({
 
         center: ol.proj.fromLonLat([

@@ -22,7 +22,7 @@ L'objectif est de construire progressivement une application réellement utilisa
 
 ---
 
-## 🚧 En cours
+##  ✅ Déjà réalisé
 
 ### Refactorisation du backend
 
@@ -34,11 +34,11 @@ L'objectif est de mieux séparer les responsabilités afin d'obtenir un code plu
 * [x] Séparation de la configuration et des informations sensibles
 * [x] Organisation des requêtes SQL
 * [x] Organisation des routes API
-* [ ] Simplification et nettoyage du code existant
+* [x] Simplification et nettoyage du code existant
 
 ---
 
-# 📋 Prochaines étapes
+# 🚧 En cours
 
 ## 1. 🧪 Tests automatisés
 
@@ -53,6 +53,7 @@ Mettre en place une véritable suite de tests afin de sécuriser les évolutions
 * [ ] Tests des futures fonctionnalités de calcul de distance
 
 ---
+# 📋 Prochaines étapes
 
 ## 2. 🔄 CI / Qualité du code
 

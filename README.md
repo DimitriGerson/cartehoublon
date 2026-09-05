@@ -32,8 +32,8 @@ L'objectif est de mieux séparer les responsabilités afin d'obtenir un code plu
 
 * [x] Extraction de la connexion à la base de données
 * [x] Séparation de la configuration et des informations sensibles
-* [ ] Organisation des requêtes SQL
-* [ ] Organisation des routes API
+* [x] Organisation des requêtes SQL
+* [x] Organisation des routes API
 * [ ] Simplification et nettoyage du code existant
 
 ---

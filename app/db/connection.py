@@ -1,4 +1,4 @@
-from db_config import get_db
+from app.db_config import get_db
 
 
 def execute_query(query, params=None):

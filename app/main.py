@@ -6,12 +6,12 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from routes.houblons import router as houblons_router
-from routes.relations import router as relations_router
-from validations import verify_docs
+from app.routes.houblons import router as houblons_router
+from app.routes.relations import router as relations_router
+from app.validations import verify_docs
 
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 app = FastAPI(

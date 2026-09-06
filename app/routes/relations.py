@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from db.connection import execute_query
-from db.queries import (
+from app.db.connection import execute_query
+from app.db.queries import (
     GET_FEMELLES_ISOLEES,
     GET_FEMELLES_MALE_INTERMEDIAIRE,
     GET_FEMELLES_PROCHES,

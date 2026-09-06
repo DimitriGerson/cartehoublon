@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from db.connection import execute_query
-from db.queries import (
+from app.db.connection import execute_query
+from app.db.queries import (
     GET_ALL_HOUBLONS,
     GET_HOUBLON_BY_ID,
     GET_HOUBLONS_BY_NOM,

@@ -10,7 +10,6 @@ from app.routes.houblons import router as houblons_router
 from app.routes.relations import router as relations_router
 from app.validations import verify_docs
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 

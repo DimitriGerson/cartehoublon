@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Récupérer le code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Installer Python
         uses: actions/setup-python@v7

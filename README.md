@@ -44,10 +44,10 @@ L'objectif est de mieux séparer les responsabilités afin d'obtenir un code plu
 
 Mettre en place une véritable suite de tests afin de sécuriser les évolutions de l'application.
 
-* [ ] Mise en place de `pytest`
-* [ ] Tests des endpoints FastAPI
-* [ ] Tests des validations
-* [ ] Tests des cas d'erreur
+* [x] Mise en place de `pytest`
+* [-] Tests des endpoints FastAPI
+* [x] Tests des validations
+* [x] Tests des cas d'erreur
 * [ ] Tests des accès à PostgreSQL
 * [ ] Tests des cas limites
 * [ ] Tests des futures fonctionnalités de calcul de distance
@@ -59,12 +59,12 @@ Mettre en place une véritable suite de tests afin de sécuriser les évolutions
 
 Automatiser les contrôles lors des Pull Requests.
 
-* [ ] Intégration des tests dans GitHub Actions
-* [ ] Exécution automatique de `pytest`
+* [x] Intégration des tests dans GitHub Actions
+* [x] Exécution automatique de `pytest`
 * [ ] Intégration de **SonarQube**
 * [ ] Analyse de la qualité du code
 * [ ] Mise en place d'un Quality Gate
-* [ ] Bloquer la validation d'une PR en cas d'échec des contrôles
+* [-] Bloquer la validation d'une PR en cas d'échec des contrôles
 
 Objectif :
 

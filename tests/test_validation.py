@@ -10,7 +10,7 @@ def test_verify_docs_valid_credentials():
     )
 
     # Pour ce premier test, on utilise les valeurs du module
-    import app.validations as validations
+    from app import validations
 
     validations.DOCS_USER = "admin"
     validations.DOCS_PASSWORD = "secret"

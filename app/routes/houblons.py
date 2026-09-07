@@ -10,7 +10,6 @@ from app.db.queries import (
     SEARCH_HOUBLONS,
 )
 
-
 router = APIRouter()
 
 

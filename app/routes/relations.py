@@ -8,7 +8,6 @@ from app.db.queries import (
     GET_FEMELLES_UNIQUE_MALE,
 )
 
-
 router = APIRouter()
 
 

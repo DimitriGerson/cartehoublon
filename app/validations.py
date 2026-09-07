@@ -1,9 +1,9 @@
 import os
 import secrets
 
+from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -12,7 +12,9 @@ DOCS_PASSWORD = os.environ.get("DOCS_PASSWORD")
 
 security = HTTPBasic()
 
-def verify_docs(credentials: HTTPBasicCredentials = Depends(security)):
+def verify_docs(
+    credentials: HTTPBasicCredentials = Depends(security) # noqa: B008
+):
      """
      Vérifie les identifiants permettant d'accéder
      à Swagger, Redoc et OpenAPI.

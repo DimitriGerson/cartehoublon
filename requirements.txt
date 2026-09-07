@@ -5,4 +5,5 @@ psycopg-binary==3.2.13
 python-dotenv
 pytest
 pytest-asyncio
+pytest-cov
 httpx

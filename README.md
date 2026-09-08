@@ -55,7 +55,7 @@ Mettre en place une véritable suite de tests afin de sécuriser les évolutions
 * [-] Tests des endpoints FastAPI
 * [x] Tests des validations
 * [x] Tests des cas d'erreur
-* [ ] Tests des accès à PostgreSQL
+* [-] Tests des accès à PostgreSQL
 * [ ] Tests des cas limites
 * [ ] Tests des futures fonctionnalités de calcul de distance
 
@@ -68,9 +68,9 @@ Automatiser les contrôles lors des Pull Requests.
 
 * [x] Intégration des tests dans GitHub Actions
 * [x] Exécution automatique de `pytest`
-* [ ] Intégration de **SonarQube**
-* [ ] Analyse de la qualité du code
-* [ ] Mise en place d'un Quality Gate
+* [-] Intégration de **SonarQube**
+* [-] Analyse de la qualité du code
+* [-] Mise en place d'un Quality Gate
 * [-] Bloquer la validation d'une PR en cas d'échec des contrôles
 
 Objectif :
@@ -147,10 +147,10 @@ Développer progressivement les fonctionnalités principales de l'application.
 
 ### Analyse mâles / femelles
 
-* [ ] Identification des plants mâles et femelles
-* [ ] Calcul de la distance entre les plants
+* [x] Identification des plants mâles et femelles
+* [-] Calcul de la distance entre les plants
 * [ ] Recherche des plants mâles proches des plants femelles
-* [ ] Exploitation de ces informations dans l'application
+* [-] Exploitation de ces informations dans l'application
 
 Le principe et la méthode utilisés pour le calcul des distances seront documentés dans le README.
 

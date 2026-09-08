@@ -24,4 +24,11 @@ jobs:
 
       - name: Lancer les tests
         run: |
-          python -m pytest -v --cov=app --cov-report=term-missing
+          python -m pytest -v --cov=app --cov-report=term-missing --cov-report=html:htmlcov --cov-report=xml: coverage.xml
+
+      - name: Publier le rapport HTML
+        if: always()
+        uses: actions/upload-artifact@V6
+        with:
+          name: pytest-html-report
+          path: htmlcov/

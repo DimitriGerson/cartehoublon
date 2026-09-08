@@ -28,7 +28,7 @@ jobs:
 
       - name: Publier le rapport HTML
         if: always()
-        uses: actions/upload-artifact@V6
+        uses: actions/upload-artifact@V4
         with:
           name: pytest-html-report
           path: htmlcov/

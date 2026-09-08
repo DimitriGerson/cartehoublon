@@ -24,7 +24,7 @@ jobs:
 
       - name: Lancer les tests
         run: |
-          python -m pytest -v --cov=app --cov-report=term-missing --cov-report=html:htmlcov --cov-report=xml: coverage.xml
+          python -m pytest -v --cov=app --cov-report=term-missing --cov-report=html:htmlcov --cov-report=xml:coverage.xml
 
       - name: Publier le rapport HTML
         if: always()

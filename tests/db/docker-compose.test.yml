@@ -1,0 +1,19 @@
+services:
+
+  postgres-test:
+
+    image: postgres:16
+
+    container_name: postgres-test
+
+    environment:
+      POSTGRES_DB: houblon_test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - ./tests/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./tests/db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql

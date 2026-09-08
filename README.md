@@ -3,6 +3,8 @@
 ![Tests](https://github.com/DimitriGerson/cartehoublon/actions/workflows/tests.yml/badge.svg)
 
 Les tests sont exécutés automatiquement sur chaque push et Pull Request.
+
+**Dernier passage :** voir [la dernière exécution des tests](https://github.com/DimitriGerson/cartehoublon/actions/workflows/tests.yml)
 # 🗺️ Roadmap du projet
 
 Ce projet est une application destinée à recenser et exploiter des observations de **houblons sauvages** dans une zone géographique donnée.

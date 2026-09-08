@@ -21,7 +21,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest-cov
 
       - name: Lancer les tests
         run: |
-          python -m pytest -v --cov=app --cov-report=term-missing
+          python -m pytest -v --cov=app --cov-report=term-missing --cov-report=html:htmlcov --cov-report=xml:coverage.xml
+
+      - name: Publier le rapport HTML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-html-report
+          path: htmlcov/

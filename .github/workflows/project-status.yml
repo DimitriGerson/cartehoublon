@@ -1,6 +1,6 @@
 name: vérifier GitHub CLI
 env:
-   GH_TOKEN: ${{ secret.GITHUB_TOKEN }}
+   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 run: |
   gh auth status
 

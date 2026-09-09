@@ -1,0 +1,20 @@
+name: Project status
+
+on:
+  workflow_dispatch:
+
+jobs:
+  project-info:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Afficher les informations du Project
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh project view 11 \
+            --owner DimitriGerson \
+            --format json

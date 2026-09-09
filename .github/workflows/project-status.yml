@@ -17,4 +17,5 @@ jobs:
         run: |
           gh project view 11 \
             --owner DimitriGerson \
+            --user \
             --format json

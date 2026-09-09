@@ -1,3 +1,4 @@
+
 name: Project status
 
 on:
@@ -11,11 +12,16 @@ jobs:
       contents: read
 
     steps:
+      - name: vérifier GitHub CLI
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh auth status
+
       - name: Afficher les informations du Project
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh project view 11 \
-            --owner DimitriGerson \
-            --user \
+            --owner @me \
             --format json

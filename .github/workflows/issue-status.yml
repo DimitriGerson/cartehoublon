@@ -11,13 +11,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Récupérer le statut de l'Issue
+      # --------------------------------------------------
+      # 1. Récupérer les informations du Project
+      # --------------------------------------------------
+      - name: Récupérer le Project
         env:
           GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          gh api graphql \
+            -f query='
+              query {
+                user(login: "DimitriGerson") {
+                  projectV2(number: 11) {
+                    id
+                    number
+                    title
+                  }
+                }
+              }
+            '
+
+      # --------------------------------------------------
+      # 2. Récupérer le numéro de l'Issue depuis le commit
+      # --------------------------------------------------
+      - name: Trouver l'Issue
+        env:
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
           ISSUE_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oE '#[0-9]+' | head -1 | tr -d '#')
 
+          echo "Message du commit :"
+          echo "$COMMIT_MESSAGE"
+
+          echo ""
           echo "Issue trouvée : $ISSUE_NUMBER"
 
           if [ -z "$ISSUE_NUMBER" ]; then
@@ -25,6 +51,15 @@ jobs:
             exit 0
           fi
 
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> "$GITHUB_ENV"
+
+      # --------------------------------------------------
+      # 3. Chercher l'Issue dans le Project
+      # --------------------------------------------------
+      - name: Trouver l'Issue dans le Project
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
           gh api graphql \
             -f query='
               query {
@@ -58,11 +93,32 @@ jobs:
               }
             ' > project.json
 
+          echo "Informations du Project :"
           cat project.json
 
-          echo "Recherche de l'Issue #$ISSUE_NUMBER dans le Project..."
-
-          jq --argjson issue "$ISSUE_NUMBER" '
+      # --------------------------------------------------
+      # 4. Extraire l'Issue et son statut actuel
+      # --------------------------------------------------
+      - name: Vérifier le statut de l'Issue
+        run: |
+          ISSUE=$(jq -r --arg number "$ISSUE_NUMBER" '
             .data.user.projectV2.items.nodes[]
-            | select(.content.number == $issue)
-          ' project.json
+            | select(.content.number == ($number | tonumber))
+          ' project.json)
+
+          if [ -z "$ISSUE" ]; then
+            echo "Issue #$ISSUE_NUMBER introuvable dans le Project."
+            exit 1
+          fi
+
+          echo "Issue trouvée :"
+          echo "$ISSUE"
+
+          STATUS=$(echo "$ISSUE" | jq -r '
+            .fieldValues.nodes[]
+            | select(.field.name == "Status")
+            | .name
+          ')
+
+          echo ""
+          echo "Statut actuel : $STATUS"

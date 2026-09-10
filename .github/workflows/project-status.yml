@@ -1,27 +1,23 @@
 
-name: Project status
+name: Issue status
 
 on:
-  workflow_dispatch:
+  issues:
+    types: [assigned]
+
+permissions:
+  issues: write
 
 jobs:
-  project-info:
+  update-status:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-
     steps:
-      - name: vérifier GitHub CLI
+      - name: Passer de Ready à In progress
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
-          gh auth status
-
-      - name: Afficher les informations du Project
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh project view 11 \
-            --owner @me \
-            --format json
+          gh issue edit "$ISSUE_NUMBER" \
+            --remove-label "Ready" \
+            --add-label "In progress"

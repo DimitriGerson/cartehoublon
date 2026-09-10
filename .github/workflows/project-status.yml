@@ -11,11 +11,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Passer de Ready à In progress
+      - name: Récupérer le numéro de l'Issue
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ISSUE_NUMBER: 15
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
+          echo "Message du commit :"
+          echo "$COMMIT_MESSAGE"
+
+          ISSUE_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oE '#[0-9]+' | head -1 | tr -d '#')
+
+          echo "Issue trouvée : $ISSUE_NUMBER"
+
+          if [ -z "$ISSUE_NUMBER" ]; then
+            echo "Aucune Issue trouvée dans le commit."
+            exit 0
+          fi
+
+          if gh issue view "$ISSUE_NUMBER" --json labels --jq '.labels[].name' | grep -Fxq "Ready"; then
+            echo "L'Issue est Ready → passage à In progress"
+
+            gh issue edit "$ISSUE_NUMBER" \
+              --remove-label "Ready" \
+              --add-label "In progress"
+          fi
           if gh issue view "$ISSUE_NUMBER" --json labels --jq '.labels[].name' | grep -Fxq "Ready"; then
             gh issue edit "$ISSUE_NUMBER" \
               --remove-label "Ready" \

@@ -11,19 +11,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Récupérer le Project
+      - name: Récupérer le statut de l'Issue
         env:
           GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
+          ISSUE_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oE '#[0-9]+' | head -1 | tr -d '#')
+
+          echo "Issue trouvée : $ISSUE_NUMBER"
+
+          if [ -z "$ISSUE_NUMBER" ]; then
+            echo "Aucune Issue trouvée dans le commit."
+            exit 0
+          fi
+
           gh api graphql \
             -f query='
-              query {
+              query($number: Int!) {
                 user(login: "DimitriGerson") {
                   projectV2(number: 11) {
-                    id
-                    number
-                    title
+                    items(first: 100) {
+                      nodes {
+                        id
+                        content {
+                          ... on Issue {
+                            number
+                            title
+                          }
+                        }
+                        fieldValues(first: 20) {
+                          nodes {
+                            ... on ProjectV2ItemFieldSingleSelectValue {
+                              name
+                              field {
+                                ... on ProjectV2SingleSelectField {
+                                  name
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
-            '
+            ' \
+            -F number="$ISSUE_NUMBER"

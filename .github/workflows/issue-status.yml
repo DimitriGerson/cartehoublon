@@ -1,0 +1,45 @@
+name: Issue status
+
+on:
+  push:
+
+permissions:
+  issues: write
+
+jobs:
+  update-status:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Passer de Ready à In progress
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          echo "Message du commit :"
+          echo "$COMMIT_MESSAGE"
+
+          ISSUE_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oE '#[0-9]+' | head -1 | tr -d '#')
+
+          echo "Issue trouvée : $ISSUE_NUMBER"
+
+          if [ -z "$ISSUE_NUMBER" ]; then
+            echo "Aucune Issue trouvée dans le commit."
+            exit 0
+          fi
+
+          if gh issue view "$ISSUE_NUMBER" \
+            --repo "$REPOSITORY" \
+            --json labels \
+            --jq '.labels[].name' | grep -Fxq "Ready"; then
+
+            echo "L'Issue est Ready → passage à In progress"
+
+            gh issue edit "$ISSUE_NUMBER" \
+              --repo "$REPOSITORY" \
+              --remove-label "Ready" \
+              --add-label "In progress"
+          else
+            echo "L'Issue n'a pas le label Ready."
+          fi

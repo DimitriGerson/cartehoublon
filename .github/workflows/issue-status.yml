@@ -27,7 +27,7 @@ jobs:
 
           gh api graphql \
             -f query='
-              query($number: Int!) {
+              query {
                 user(login: "DimitriGerson") {
                   projectV2(number: 11) {
                     items(first: 100) {
@@ -56,5 +56,13 @@ jobs:
                   }
                 }
               }
-            ' \
-            -F number="$ISSUE_NUMBER"
+            ' > project.json
+
+          cat project.json
+
+          echo "Recherche de l'Issue #$ISSUE_NUMBER dans le Project..."
+
+          jq --argjson issue "$ISSUE_NUMBER" '
+            .data.user.projectV2.items.nodes[]
+            | select(.content.number == $issue)
+          ' project.json

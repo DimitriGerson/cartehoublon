@@ -5,17 +5,25 @@ on:
 
 permissions:
   contents: read
-  issues: read
 
 jobs:
   project-info:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Tester l'accès au Project
+      - name: Récupérer le Project
         env:
           GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
         run: |
-          gh project view 11 \
-            --owner DimitriGerson \
-            --format json
+          gh api graphql \
+            -f query='
+              query {
+                user(login: "DimitriGerson") {
+                  projectV2(number: 11) {
+                    id
+                    number
+                    title
+                  }
+                }
+              }
+            '

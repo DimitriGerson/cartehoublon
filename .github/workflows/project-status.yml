@@ -11,8 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Récupérer le numéro de l'Issue
+      - name: Passer de Ready à In progress
         env:
+          GH_TOKEN: ${{ github.token }}
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
           echo "Message du commit :"
@@ -33,9 +34,6 @@ jobs:
             gh issue edit "$ISSUE_NUMBER" \
               --remove-label "Ready" \
               --add-label "In progress"
-          fi
-          if gh issue view "$ISSUE_NUMBER" --json labels --jq '.labels[].name' | grep -Fxq "Ready"; then
-            gh issue edit "$ISSUE_NUMBER" \
-              --remove-label "Ready" \
-              --add-label "In progress"
+          else
+            echo "L'Issue n'a pas le label Ready."
           fi

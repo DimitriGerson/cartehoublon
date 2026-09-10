@@ -7,12 +7,32 @@ permissions:
   contents: read
 
 jobs:
-  update-status:
+  project-info:
     runs-on: ubuntu-latest
 
     steps:
       # --------------------------------------------------
-      # 1. Récupérer le numéro de l'Issue depuis le commit
+      # 1. Récupérer le Project
+      # --------------------------------------------------
+      - name: Récupérer le Project
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          gh api graphql \
+            -f query='
+              query {
+                user(login: "DimitriGerson") {
+                  projectV2(number: 11) {
+                    id
+                    number
+                    title
+                  }
+                }
+              }
+            '
+
+      # --------------------------------------------------
+      # 2. Récupérer le numéro de l'Issue depuis le commit
       # --------------------------------------------------
       - name: Trouver l'Issue
         env:
@@ -34,7 +54,7 @@ jobs:
           echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> "$GITHUB_ENV"
 
       # --------------------------------------------------
-      # 2. Trouver l'Issue dans le Project
+      # 3. Trouver l'Issue dans le Project
       # --------------------------------------------------
       - name: Trouver l'Issue dans le Project
         env:
@@ -77,79 +97,57 @@ jobs:
           cat project.json
 
       # --------------------------------------------------
-      # 3. Récupérer l'ID de l'item correspondant à l'Issue
+      # 4. Vérifier le statut actuel
       # --------------------------------------------------
-      - name: Identifier l'item du Project
+      - name: Vérifier le statut de l'Issue
         run: |
-          ITEM_ID=$(jq -r --arg number "$ISSUE_NUMBER" '
+          ISSUE=$(jq -r --arg number "$ISSUE_NUMBER" '
             .data.user.projectV2.items.nodes[]
             | select(.content.number == ($number | tonumber))
-            | .id
           ' project.json)
 
-          if [ -z "$ITEM_ID" ] || [ "$ITEM_ID" = "null" ]; then
+          if [ -z "$ISSUE" ]; then
             echo "Issue #$ISSUE_NUMBER introuvable dans le Project."
             exit 1
           fi
 
-          echo "Item du Project trouvé : $ITEM_ID"
+          echo "Issue trouvée :"
+          echo "$ISSUE"
 
-          echo "ITEM_ID=$ITEM_ID" >> "$GITHUB_ENV"
-
-      # --------------------------------------------------
-      # 4. Vérifier le statut actuel
-      # --------------------------------------------------
-      - name: Vérifier le statut actuel
-        run: |
-          STATUS=$(jq -r --arg number "$ISSUE_NUMBER" '
-            .data.user.projectV2.items.nodes[]
-            | select(.content.number == ($number | tonumber))
-            | .fieldValues.nodes[]
+          STATUS=$(echo "$ISSUE" | jq -r '
+            .fieldValues.nodes[]
             | select(.field.name == "Status")
             | .name
-          ' project.json)
+          ')
 
+          echo ""
           echo "Statut actuel : $STATUS"
 
-          echo "STATUS=$STATUS" >> "$GITHUB_ENV"
-
       # --------------------------------------------------
-      # 5. Passer de Ready à In progress
+      # 5. Récupérer les IDs du champ Status et des options
       # --------------------------------------------------
-      - name: Passer de Ready à In progress
-        if: env.STATUS == 'Ready'
+      - name: Récupérer les informations du Status
         env:
           GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
         run: |
-          echo "Modification du statut..."
-
           gh api graphql \
             -f query='
-              mutation(
-                $projectId: ID!
-                $itemId: ID!
-                $fieldId: ID!
-                $optionId: String!
-              ) {
-                updateProjectV2ItemFieldValue(
-                  input: {
-                    projectId: $projectId
-                    itemId: $itemId
-                    fieldId: $fieldId
-                    value: {
-                      singleSelectOptionId: $optionId
+              query {
+                user(login: "DimitriGerson") {
+                  projectV2(number: 11) {
+                    fields(first: 20) {
+                      nodes {
+                        ... on ProjectV2SingleSelectField {
+                          id
+                          name
+                          options {
+                            id
+                            name
+                          }
+                        }
+                      }
                     }
-                  }
-                ) {
-                  projectV2Item {
-                    id
                   }
                 }
               }
-            ' \
-            -f projectId='PVT_kwHOAxGRpc4BiwlU' \
-            -f itemId="$ITEM_ID" \
-            -f fieldId='PVTSSF_lAHOAxGRpc4BiwlUzhhnY0w' \
-            -f optionId='47fc9ee4'
-
-          echo "Statut modifié : Ready → In progress"
+            '

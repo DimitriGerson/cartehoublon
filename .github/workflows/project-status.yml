@@ -1,9 +1,7 @@
-
 name: Issue status
 
 on:
-  issues:
-    types: [assigned]
+  push:
 
 permissions:
   issues: write
@@ -16,8 +14,10 @@ jobs:
       - name: Passer de Ready à In progress
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_NUMBER: 15
         run: |
-          gh issue edit "$ISSUE_NUMBER" \
-            --remove-label "Ready" \
-            --add-label "In progress"
+          if gh issue view "$ISSUE_NUMBER" --json labels --jq '.labels[].name' | grep -Fxq "Ready"; then
+            gh issue edit "$ISSUE_NUMBER" \
+              --remove-label "Ready" \
+              --add-label "In progress"
+          fi

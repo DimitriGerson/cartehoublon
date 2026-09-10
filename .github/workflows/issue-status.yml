@@ -1,0 +1,155 @@
+name: Project status
+
+on:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  update-status:
+    runs-on: ubuntu-latest
+
+    steps:
+      # --------------------------------------------------
+      # 1. Récupérer le numéro de l'Issue depuis le commit
+      # --------------------------------------------------
+      - name: Trouver l'Issue
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          ISSUE_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oE '#[0-9]+' | head -1 | tr -d '#')
+
+          echo "Message du commit :"
+          echo "$COMMIT_MESSAGE"
+
+          echo ""
+          echo "Issue trouvée : $ISSUE_NUMBER"
+
+          if [ -z "$ISSUE_NUMBER" ]; then
+            echo "Aucune Issue trouvée dans le commit."
+            exit 0
+          fi
+
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> "$GITHUB_ENV"
+
+      # --------------------------------------------------
+      # 2. Trouver l'Issue dans le Project
+      # --------------------------------------------------
+      - name: Trouver l'Issue dans le Project
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          gh api graphql \
+            -f query='
+              query {
+                user(login: "DimitriGerson") {
+                  projectV2(number: 11) {
+                    items(first: 100) {
+                      nodes {
+                        id
+                        content {
+                          ... on Issue {
+                            number
+                            title
+                          }
+                        }
+                        fieldValues(first: 20) {
+                          nodes {
+                            ... on ProjectV2ItemFieldSingleSelectValue {
+                              name
+                              field {
+                                ... on ProjectV2SingleSelectField {
+                                  name
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ' > project.json
+
+          echo "Informations du Project :"
+          cat project.json
+
+      # --------------------------------------------------
+      # 3. Récupérer l'ID de l'item correspondant à l'Issue
+      # --------------------------------------------------
+      - name: Identifier l'item du Project
+        run: |
+          ITEM_ID=$(jq -r --arg number "$ISSUE_NUMBER" '
+            .data.user.projectV2.items.nodes[]
+            | select(.content.number == ($number | tonumber))
+            | .id
+          ' project.json)
+
+          if [ -z "$ITEM_ID" ] || [ "$ITEM_ID" = "null" ]; then
+            echo "Issue #$ISSUE_NUMBER introuvable dans le Project."
+            exit 1
+          fi
+
+          echo "Item du Project trouvé : $ITEM_ID"
+
+          echo "ITEM_ID=$ITEM_ID" >> "$GITHUB_ENV"
+
+      # --------------------------------------------------
+      # 4. Vérifier le statut actuel
+      # --------------------------------------------------
+      - name: Vérifier le statut actuel
+        run: |
+          STATUS=$(jq -r --arg number "$ISSUE_NUMBER" '
+            .data.user.projectV2.items.nodes[]
+            | select(.content.number == ($number | tonumber))
+            | .fieldValues.nodes[]
+            | select(.field.name == "Status")
+            | .name
+          ' project.json)
+
+          echo "Statut actuel : $STATUS"
+
+          echo "STATUS=$STATUS" >> "$GITHUB_ENV"
+
+      # --------------------------------------------------
+      # 5. Passer de Ready à In progress
+      # --------------------------------------------------
+      - name: Passer de Ready à In progress
+        if: env.STATUS == 'Ready'
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          echo "Modification du statut..."
+
+          gh api graphql \
+            -f query='
+              mutation(
+                $projectId: ID!
+                $itemId: ID!
+                $fieldId: ID!
+                $optionId: String!
+              ) {
+                updateProjectV2ItemFieldValue(
+                  input: {
+                    projectId: $projectId
+                    itemId: $itemId
+                    fieldId: $fieldId
+                    value: {
+                      singleSelectOptionId: $optionId
+                    }
+                  }
+                ) {
+                  projectV2Item {
+                    id
+                  }
+                }
+              }
+            ' \
+            -f projectId='PVT_kwHOAxGRpc4BiwlU' \
+            -f itemId="$ITEM_ID" \
+            -f fieldId='PVTSSF_lAHOAxGRpc4BiwlUzhhnY0w' \
+            -f optionId='47fc9ee4'
+
+          echo "Statut modifié : Ready → In progress"

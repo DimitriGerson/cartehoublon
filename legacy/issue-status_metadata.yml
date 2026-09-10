@@ -1,0 +1,153 @@
+name: Project status
+
+on:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  project-info:
+    runs-on: ubuntu-latest
+
+    steps:
+      # --------------------------------------------------
+      # 1. Récupérer le Project
+      # --------------------------------------------------
+      - name: Récupérer le Project
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          gh api graphql \
+            -f query='
+              query {
+                user(login: "DimitriGerson") {
+                  projectV2(number: 11) {
+                    id
+                    number
+                    title
+                  }
+                }
+              }
+            '
+
+      # --------------------------------------------------
+      # 2. Récupérer le numéro de l'Issue depuis le commit
+      # --------------------------------------------------
+      - name: Trouver l'Issue
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          ISSUE_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oE '#[0-9]+' | head -1 | tr -d '#')
+
+          echo "Message du commit :"
+          echo "$COMMIT_MESSAGE"
+
+          echo ""
+          echo "Issue trouvée : $ISSUE_NUMBER"
+
+          if [ -z "$ISSUE_NUMBER" ]; then
+            echo "Aucune Issue trouvée dans le commit."
+            exit 0
+          fi
+
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> "$GITHUB_ENV"
+
+      # --------------------------------------------------
+      # 3. Trouver l'Issue dans le Project
+      # --------------------------------------------------
+      - name: Trouver l'Issue dans le Project
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          gh api graphql \
+            -f query='
+              query {
+                user(login: "DimitriGerson") {
+                  projectV2(number: 11) {
+                    items(first: 100) {
+                      nodes {
+                        id
+                        content {
+                          ... on Issue {
+                            number
+                            title
+                          }
+                        }
+                        fieldValues(first: 20) {
+                          nodes {
+                            ... on ProjectV2ItemFieldSingleSelectValue {
+                              name
+                              field {
+                                ... on ProjectV2SingleSelectField {
+                                  name
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ' > project.json
+
+          echo "Informations du Project :"
+          cat project.json
+
+      # --------------------------------------------------
+      # 4. Vérifier le statut actuel
+      # --------------------------------------------------
+      - name: Vérifier le statut de l'Issue
+        run: |
+          ISSUE=$(jq -r --arg number "$ISSUE_NUMBER" '
+            .data.user.projectV2.items.nodes[]
+            | select(.content.number == ($number | tonumber))
+          ' project.json)
+
+          if [ -z "$ISSUE" ]; then
+            echo "Issue #$ISSUE_NUMBER introuvable dans le Project."
+            exit 1
+          fi
+
+          echo "Issue trouvée :"
+          echo "$ISSUE"
+
+          STATUS=$(echo "$ISSUE" | jq -r '
+            .fieldValues.nodes[]
+            | select(.field.name == "Status")
+            | .name
+          ')
+
+          echo ""
+          echo "Statut actuel : $STATUS"
+
+      # --------------------------------------------------
+      # 5. Récupérer les IDs du champ Status et des options
+      # --------------------------------------------------
+      - name: Récupérer les informations du Status
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          gh api graphql \
+            -f query='
+              query {
+                user(login: "DimitriGerson") {
+                  projectV2(number: 11) {
+                    fields(first: 20) {
+                      nodes {
+                        ... on ProjectV2SingleSelectField {
+                          id
+                          name
+                          options {
+                            id
+                            name
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            '

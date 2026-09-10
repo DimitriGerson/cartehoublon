@@ -12,7 +12,7 @@ jobs:
 
     steps:
       # --------------------------------------------------
-      # 1. Récupérer les informations du Project
+      # 1. Récupérer le Project
       # --------------------------------------------------
       - name: Récupérer le Project
         env:
@@ -54,7 +54,7 @@ jobs:
           echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> "$GITHUB_ENV"
 
       # --------------------------------------------------
-      # 3. Chercher l'Issue dans le Project
+      # 3. Trouver l'Issue dans le Project
       # --------------------------------------------------
       - name: Trouver l'Issue dans le Project
         env:
@@ -97,7 +97,7 @@ jobs:
           cat project.json
 
       # --------------------------------------------------
-      # 4. Extraire l'Issue et son statut actuel
+      # 4. Vérifier le statut actuel
       # --------------------------------------------------
       - name: Vérifier le statut de l'Issue
         run: |
@@ -122,3 +122,32 @@ jobs:
 
           echo ""
           echo "Statut actuel : $STATUS"
+
+      # --------------------------------------------------
+      # 5. Récupérer les IDs du champ Status et des options
+      # --------------------------------------------------
+      - name: Récupérer les informations du Status
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          gh api graphql \
+            -f query='
+              query {
+                user(login: "DimitriGerson") {
+                  projectV2(number: 11) {
+                    fields(first: 20) {
+                      nodes {
+                        ... on ProjectV2SingleSelectField {
+                          id
+                          name
+                          options {
+                            id
+                            name
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            '

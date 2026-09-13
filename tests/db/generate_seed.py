@@ -52,11 +52,11 @@ def get_tables(cursor):
 def main():
 
     conn = psycopg2.connect(
-        host=POSTGRES_HOST,
-        port=POSTGRES_PORT,
-        dbname=POSTGRES_NAME,
-        user=POSTGRES_USER,
-        password=POSTGRES_PASSWORD,
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD,
         cursor_factory=RealDictCursor,
     )
 

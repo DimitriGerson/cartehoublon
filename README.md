@@ -48,6 +48,34 @@ L'objectif est de mieux séparer les responsabilités afin d'obtenir un code plu
 
 ---
 
+##  ✅ Déjà réalisé
+
+###  CI / Qualité du code
+
+Automatiser les contrôles lors des Pull Requests.
+
+* [x] Intégration des tests dans GitHub Actions
+* [x] Exécution automatique de `pytest`
+* [x] Intégration de **SonarQube**
+* [x] Analyse de la qualité du code
+* [x] Mise en place d'un Quality Gate
+* [x] Bloquer la validation d'une PR en cas d'échec des contrôles
+
+Objectif :
+
+```text
+Pull Request
+      ↓
+   pytest
+      ↓
+  SonarQube
+      ↓
+ Quality Gate
+      ↓
+    Merge
+```
+
+---
 # 🚧 En cours
 
 ## 1. 🧪 Tests automatisés
@@ -65,32 +93,7 @@ Mettre en place une véritable suite de tests afin de sécuriser les évolutions
 ---
 # 📋 Prochaines étapes
 
-## 2. 🔄 CI / Qualité du code
 
-Automatiser les contrôles lors des Pull Requests.
-
-* [x] Intégration des tests dans GitHub Actions
-* [x] Exécution automatique de `pytest`
-* [-] Intégration de **SonarQube**
-* [-] Analyse de la qualité du code
-* [-] Mise en place d'un Quality Gate
-* [-] Bloquer la validation d'une PR en cas d'échec des contrôles
-
-Objectif :
-
-```text
-Pull Request
-      ↓
-   pytest
-      ↓
-  SonarQube
-      ↓
- Quality Gate
-      ↓
-    Merge
-```
-
----
 
 ## 3. 📖 Documentation
 

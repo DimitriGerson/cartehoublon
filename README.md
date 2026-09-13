@@ -7,6 +7,8 @@ Les tests sont exécutés automatiquement sur chaque push et Pull Request.
 **Dernier passage :** voir [la dernière exécution des tests](https://github.com/DimitriGerson/cartehoublon/actions/workflows/tests.yml)
 # 🗺️ Roadmap du projet
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DimitriGerson_cartehoublon&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=DimitriGerson_cartehoublon)
+
 Ce projet est une application destinée à recenser et exploiter des observations de **houblons sauvages** dans une zone géographique donnée.
 
 L'objectif est de construire progressivement une application réellement utilisable, en privilégiant une architecture simple, du code maintenable et une démarche de développement professionnelle.

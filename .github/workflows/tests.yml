@@ -25,6 +25,20 @@ jobs:
           pip install -r requirements.txt
           pip install pytest-cov
 
+      - name: Démarrer PostgreSQL de test
+        run : |
+          docker compose -f tests/db/docker-compose.test.yml up -d
+
+      - name: Attendre PostgresSQL
+        run : |
+          until docker exec postgres-test pg_isready -U test -d houblon_test; do
+            sleep 1
+          done
+
+      - name: Vérifier PostgreSQL
+        run: |
+          docker exec postgres-test psql -U test -d houblon_test -c "\dt"
+
       - name: Lancer les tests
         run: |
           python -m pytest -v --cov=app --cov-report=term-missing --cov-report=html:htmlcov --cov-report=xml:coverage.xml

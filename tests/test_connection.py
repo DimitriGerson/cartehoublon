@@ -1,5 +1,5 @@
 from app.db import connection
-
+from app.db.connection import execute_query
 
 def test_execute_query(monkeypatch):
     class FakeCursor:
@@ -35,3 +35,8 @@ def test_execute_query(monkeypatch):
     ]
 
     assert fake_conn.closed is True
+
+def test_real_postgresql_connection():
+    rows = execute_query("SELECT 1 AS value")
+
+    assert rows == [{"value": 1}]
